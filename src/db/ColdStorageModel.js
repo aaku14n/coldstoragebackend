@@ -17,6 +17,7 @@ export default class ColdStorageModel extends BaseModel {
       Object.assign(coldStorageDetails, {
         coldStorageIdentityId: coldStorageDetails.coldStorageId
       });
+      delete coldStorageDetails.coldStorageId;
       const coldStorage = await this.model.create(coldStorageDetails);
       if (!coldStorage) {
         throw {

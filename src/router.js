@@ -13,11 +13,16 @@ import {
   login as loginUserRoutes,
   get as getUserRoutes,
   put as updateUserRoutes,
-  getById as getByIdUserRoutes
+  getById as getUserByIdRoutes
 } from "./routes/user";
 
 import { create as createColdStorageRoutes } from "./routes/coldStorage";
 
+import {
+  create as addFarmerRoute,
+  getFarmerByColdId as getAllFarmerByColdId
+} from "./routes/farmer";
+import { getLocationByPincode } from "./routes/pincode";
 export default function createRouter() {
   // *********
   // * SETUP *
@@ -61,12 +66,17 @@ export default function createRouter() {
    */
   // the sessions.verify middleware ensures the user is logged in
   router.post("/signup", createColdStorageRoutes);
+  router.post("/farmer/:coldStorageId", addFarmerRoute);
+  router.get("/farmer/:coldStorageId", getAllFarmerByColdId);
   router.post("/user/login", loginUserRoutes);
+  router.get("/user/:Id", getUserByIdRoutes);
+
   router.post("/user", createUserRoutes);
-  router.get("/user/:Id", getByIdUserRoutes);
+
   router.get("/users", getUserRoutes);
   router.put("/user/:Id", updateUserRoutes);
 
+  router.get("/pincode/:pincode", getLocationByPincode);
   // ******************
   // * ERROR HANDLING *
   // ******************

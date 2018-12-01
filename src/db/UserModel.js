@@ -1,19 +1,25 @@
 import BaseModel from "./BaseModel";
 import { hashPassword, comparePassword } from "../lib/crypto";
 import { default as userSchema } from "../schemas/user.schema.js";
+import { default as coldStorageSchema } from "../schemas/coldStorage.schema";
 import {
   ERROR_CODE_USER_CREATE,
   ERROR_CODE_USER_DOSE_NOT_EXIST,
-  ERROR_CODE_INCORRECT_PASSWORD
+  ERROR_CODE_INCORRECT_PASSWORD,
+  ERROR_CODE_USER_GET
 } from "../lib/errorCode";
 import { ApplicationError } from "../lib/errors";
 
 export default class userModel extends BaseModel {
   constructor(connection) {
-    super("user", connection);
+    super("User", connection);
     this.schema = userSchema;
-    this.name = "user";
+    this.name = "User";
     this.model = this.connection.model(this.name, this.schema);
+    this.coldStorageModel = this.connection.model(
+      "ColdStorage",
+      coldStorageSchema
+    );
   }
   async create(userInformation) {
     try {
@@ -61,22 +67,29 @@ export default class userModel extends BaseModel {
       throw error;
     }
   }
-  async get() {
-    try {
-      const users = await this.model.find({
-        statusFlag: true
-      });
-      return users;
-    } catch (error) {
-      throw error;
-    }
-  }
+
   async getById(userId) {
     try {
-      const user = await this.model.find({
-        userId: userId,
-        statusFlag: true
-      });
+      const user = await this.model
+        .findOne(
+          {
+            userId: userId,
+            statusFlag: true
+          },
+          { password: 0 }
+        )
+        .populate({
+          path: "coldStorage",
+          model: "ColdStorage"
+        })
+        .lean();
+      if (!user) {
+        throw {
+          message: "Error while fetching user detail",
+          errorCode: ERROR_CODE_USER_GET,
+          statusCode: 502
+        };
+      }
       return user;
     } catch (error) {
       throw error;

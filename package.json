@@ -4,7 +4,8 @@
   "description": "A simple app for cold storage management",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=qa nodemon src/index.js --exec babel-node --presets babel-preset-env",
+    "start": "cross-env NODE_ENV=development nodemon src/index.js --exec babel-node --presets babel-preset-env",
+    "start:qa": "cross-env NODE_ENV=qa nodemon src/index.js --exec babel-node --presets babel-preset-env",
     "test": "echo test"
   },
   "repository": {
