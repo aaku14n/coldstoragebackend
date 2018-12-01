@@ -34,7 +34,7 @@ export default class CommentModel extends BaseModel {
       }
       const farmerObj = Object.assign({}, farmerDetails, {
         createdBy: userId,
-        coldStorageId
+        coldStorageId: coldStorageId
       });
       const createFarmerRes = await this.model.create(farmerObj);
       if (!createFarmerRes) {
@@ -74,16 +74,29 @@ export default class CommentModel extends BaseModel {
       throw error;
     }
   }
-  async put(commentId, commentInformation) {
+  async editFarmer(coldStorageId, farmerDetails) {
     try {
-      const comment = await this.model.findOneAndUpdate(
-        { _id: commentId, statusFlag: true },
-        { $set: commentInformation },
+      const { userId } = farmerDetails;
+      const verifyUserResponse = await this.userModel.findOne({
+        userId,
+        coldStorageId
+      });
+
+      if (!verifyUserResponse) {
+        throw {
+          message: "Wrong UserId or cold storage id",
+          errorCode: ERROR_CODE_INVALID_DETAIL,
+          statusCode: 401
+        };
+      }
+      const farmerResponse = await this.model.findOneAndUpdate(
+        { _id: farmerDetails._id, statusFlag: true },
+        { $set: farmerDetails },
         { new: true }
       );
-      return comment;
+      return farmerResponse;
     } catch (error) {
-      throw new ApplicationError(error, 500, {});
+      throw error;
     }
   }
 }

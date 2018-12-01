@@ -34,13 +34,16 @@ export const getFarmerByColdId = route(async (req, res) => {
     throw new ApplicationError(error, 500, {});
   }
 });
-export const put = route(async (req, res) => {
+export const editFarmer = route(async (req, res) => {
   const farmerModel = new FarmerModel();
   try {
-    let commentId = req.params.Id;
-    let commentInformation = req.body.commentInformation;
-    const comment = await farmerModel.put(commentId, commentInformation);
-    res.send({ results: comment });
+    const coldStorageId = req.params.coldStorageId;
+    const farmerDetails = req.body;
+    const updateFarmer = await farmerModel.editFarmer(
+      coldStorageId,
+      farmerDetails
+    );
+    res.send({ results: updateFarmer });
   } catch (error) {
     throw new ApplicationError(error, 500, {});
   }

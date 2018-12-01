@@ -1,0 +1,19 @@
+2018-12-01T20:47:12.990Z [right meow!] error: { status: true,
+  createdAt: 2018-12-01T20:47:12.985Z,
+  updatedAt: 2018-12-01T20:47:12.985Z,
+  _id: 5c02f350975eda209cdeca93,
+  coldStorageId: '028eb4f0-f409-11e8-a3bc-b5b0c217ccb2',
+  numberOfBag: 250,
+  receiptNo: 10031,
+  submittingPersonName: 'Aakarsh Yadav',
+  submittingPersonMobileNo: 9456888501,
+  transactionType: 'credit',
+  itemType: 'aalo',
+  createdBy: '036c1ca0-f409-11e8-a3bc-b5b0c217ccb2',
+  farmerId: '13a6a860-f553-11e8-ba3b-6b020f64aae3',
+  __v: 0,
+  coldStorage: null,
+  user: null,
+  id: '5c02f350975eda209cdeca93' }
+2018-12-01T21:24:13.845Z [development:logs] error: TypeError: Cannot read property 'userId' of undefined :{"farmerId":"13a6a860-f553-11e8-ba3b-6b020f64aae3"}
+2018-12-01T21:26:09.626Z [development:logs] error: TypeError: Cannot read property 'userId' of undefined :{"farmerId":"13a6a860-f553-11e8-ba3b-6b020f64aae3"}

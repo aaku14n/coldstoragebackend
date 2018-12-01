@@ -20,8 +20,21 @@ import { create as createColdStorageRoutes } from "./routes/coldStorage";
 
 import {
   create as addFarmerRoute,
-  getFarmerByColdId as getAllFarmerByColdId
+  getFarmerByColdId as getAllFarmerByColdId,
+  editFarmer as editFarmerRoute
 } from "./routes/farmer";
+
+import {
+  create as addOrderRoute,
+  put as editOrderRoute,
+  getOrdersByFarmerId as getOrdersByFarmerIdRoute
+} from "./routes/order";
+
+import {
+  create as addTransactionRoute,
+  put as editTransactionRoute,
+  getTransactionByFarmerId as getTransactionsByFarmerIdRoute
+} from "./routes/transaction";
 import { getLocationByPincode } from "./routes/pincode";
 export default function createRouter() {
   // *********
@@ -66,13 +79,23 @@ export default function createRouter() {
    */
   // the sessions.verify middleware ensures the user is logged in
   router.post("/signup", createColdStorageRoutes);
+
   router.post("/farmer/:coldStorageId", addFarmerRoute);
+  router.put("/farmer/:coldStorageId", editFarmerRoute);
   router.get("/farmer/:coldStorageId", getAllFarmerByColdId);
+
+  router.post("/order/:farmerId", addOrderRoute);
+  router.get("/orders/:farmerId", getOrdersByFarmerIdRoute);
+  router.put("/order/:orderId", editOrderRoute);
+
+  router.post("/transaction/:farmerId", addTransactionRoute);
+  router.get("/transactions/:farmerId", getTransactionsByFarmerIdRoute);
+  router.put("/transaction/:transactionId", editTransactionRoute);
+
   router.post("/user/login", loginUserRoutes);
   router.get("/user/:Id", getUserByIdRoutes);
 
   router.post("/user", createUserRoutes);
-
   router.get("/users", getUserRoutes);
   router.put("/user/:Id", updateUserRoutes);
 

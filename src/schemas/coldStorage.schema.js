@@ -30,5 +30,5 @@ const ColdStorage = new mongoose.Schema(
     timestamps: true
   }
 );
-ColdStorage.index({ coldStorageIdentityId: 1 });
+
 export default ColdStorage;

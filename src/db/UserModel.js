@@ -8,7 +8,6 @@ import {
   ERROR_CODE_INCORRECT_PASSWORD,
   ERROR_CODE_USER_GET
 } from "../lib/errorCode";
-import { ApplicationError } from "../lib/errors";
 
 export default class userModel extends BaseModel {
   constructor(connection) {
