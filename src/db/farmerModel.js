@@ -2,11 +2,14 @@ import BaseModel from "./BaseModel";
 import { ApplicationError } from "../lib/errors";
 
 import { default as farmerSchema } from "../schemas/farmer.schema";
+import { default as orderSchema } from "../schemas/order.schema";
+import { default as transactionSchema } from "../schemas/transaction.schema";
 import { default as userSchema } from "../schemas/user.schema";
 import {
   ERROR_CODE_INVALID_DETAIL,
   ERROR_CODE_CREATING_FARMER
 } from "../lib/errorCode";
+import { CREDIT } from "../lib/constant";
 
 export default class CommentModel extends BaseModel {
   constructor(connection) {
@@ -15,6 +18,11 @@ export default class CommentModel extends BaseModel {
     this.name = "farmer";
     this.model = this.connection.model(this.name, this.schema);
     this.userModel = this.connection.model("User", userSchema);
+    this.orderModel = this.connection.model("Order", orderSchema);
+    this.transactionModel = this.connection.model(
+      "Transaction",
+      transactionSchema
+    );
   }
   async create(coldStorageId, farmerDetails) {
     try {
@@ -95,6 +103,76 @@ export default class CommentModel extends BaseModel {
         { new: true }
       );
       return farmerResponse;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getFarmerDetails(farmerId) {
+    try {
+      const farmerDetails = await this.model
+        .findOne({
+          farmerId: farmerId,
+          statusFlag: true
+        })
+        .lean();
+      const orders = await this.orderModel
+        .find({ farmerId: farmerId })
+        .sort({ createdAt: -1 });
+      const transactions = await this.transactionModel
+        .find({
+          farmerId: farmerId
+        })
+        .sort({ createdAt: -1 });
+
+      farmerDetails.lastOrder = orders[0];
+      farmerDetails.lastTransaction = transactions[0];
+
+      const debitedOrders = [],
+        creditedOrders = [],
+        debitedTransactions = [],
+        creditedTransaction = [];
+      orders.forEach(order => {
+        if (order.transactionType === CREDIT) {
+          creditedOrders.push(order);
+        } else {
+          debitedOrders.push(order);
+        }
+      });
+
+      let totalBag =
+        (creditedOrders
+          ? creditedOrders.reduce((sum, order) => sum + order.numberOfBag, 0)
+          : 0) -
+        (debitedOrders
+          ? debitedOrders.reduce((sum, order) => sum + order.numberOfBag, 0)
+          : 0);
+      transactions.forEach(transaction => {
+        if (transaction.transactionType === CREDIT) {
+          creditedTransaction.push(transaction);
+        } else {
+          debitedTransactions.push(transaction);
+        }
+      });
+
+      let totalCreditedAmount = creditedTransaction
+        ? creditedTransaction.reduce(
+            (sum, transaction) => sum + transaction.amount,
+            0
+          )
+        : 0;
+      let totalDebitedAmount = debitedTransactions
+        ? debitedTransactions.reduce(
+            (sum, transaction) => sum + transaction.amount,
+            0
+          )
+        : 0;
+
+      let totalAmount = totalCreditedAmount - totalDebitedAmount;
+
+      farmerDetails.totalAmount = totalAmount;
+      farmerDetails.totalBag = totalBag;
+
+      return { farmerDetails, orders, transactions };
     } catch (error) {
       throw error;
     }

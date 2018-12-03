@@ -48,3 +48,14 @@ export const editFarmer = route(async (req, res) => {
     throw new ApplicationError(error, 500, {});
   }
 });
+
+export const getFarmerDetails = route(async (req, res) => {
+  const farmerModel = new FarmerModel();
+  try {
+    const { farmerId } = req.params;
+    const farmerDetails = await farmerModel.getFarmerDetails(farmerId);
+    res.send({ results: farmerDetails });
+  } catch (error) {
+    throw new ApplicationError(error, 500, {});
+  }
+});

@@ -21,6 +21,7 @@ import { create as createColdStorageRoutes } from "./routes/coldStorage";
 import {
   create as addFarmerRoute,
   getFarmerByColdId as getAllFarmerByColdId,
+  getFarmerDetails as getFarmerByFarmerId,
   editFarmer as editFarmerRoute
 } from "./routes/farmer";
 
@@ -82,7 +83,8 @@ export default function createRouter() {
 
   router.post("/farmer/:coldStorageId", addFarmerRoute);
   router.put("/farmer/:coldStorageId", editFarmerRoute);
-  router.get("/farmer/:coldStorageId", getAllFarmerByColdId);
+  router.get("/farmers/:coldStorageId", getAllFarmerByColdId);
+  router.get("/farmer/:farmerId", getFarmerByFarmerId);
 
   router.post("/order/:farmerId", addOrderRoute);
   router.get("/orders/:farmerId", getOrdersByFarmerIdRoute);

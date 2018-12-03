@@ -16,7 +16,7 @@ const Order = new mongoose.Schema(
     },
     submittingPersonName: String,
     submittingPersonMobileNo: {
-      type: Number
+      type: String
     },
     status: {
       type: Boolean,
